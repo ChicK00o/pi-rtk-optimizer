@@ -6,6 +6,7 @@ import {
 	normalizeRtkIntegrationConfig,
 	saveRtkIntegrationConfig,
 } from "./config-store.js";
+import { isSupportedModel } from "./model-support.js";
 import { computeRewriteDecision } from "./command-rewriter.js";
 import { registerRtkIntegrationCommand } from "./config-modal.js";
 import { EXTENSION_NAME } from "./constants.js";
@@ -220,7 +221,9 @@ export default function rtkIntegrationExtension(pi: ExtensionAPI): void {
 		suggestionNotices.reset();
 		missingRtkWarningShown = false;
 		await refreshConfig(ctx);
-		maybeWarnRtkMissing(ctx);
+		if (isSupportedModel(ctx.model)) {
+			maybeWarnRtkMissing(ctx);
+		}
 	});
 
 	pi.on("session_switch", async (_event, ctx) => {
@@ -228,10 +231,16 @@ export default function rtkIntegrationExtension(pi: ExtensionAPI): void {
 		suggestionNotices.reset();
 		missingRtkWarningShown = false;
 		await refreshConfig(ctx);
-		maybeWarnRtkMissing(ctx);
+		if (isSupportedModel(ctx.model)) {
+			maybeWarnRtkMissing(ctx);
+		}
 	});
 
 	pi.on("before_agent_start", async (event, ctx) => {
+		if (!isSupportedModel(ctx.model)) {
+			return {};
+		}
+
 		await ensureRuntimeStatusFresh();
 		maybeWarnRtkMissing(ctx);
 
@@ -246,6 +255,10 @@ export default function rtkIntegrationExtension(pi: ExtensionAPI): void {
 
 	pi.on("tool_call", async (event, ctx) => {
 		if (!config.enabled) {
+			return {};
+		}
+
+		if (!isSupportedModel(ctx.model)) {
 			return {};
 		}
 
@@ -290,6 +303,10 @@ export default function rtkIntegrationExtension(pi: ExtensionAPI): void {
 
 	pi.on("tool_result", async (event, ctx) => {
 		if (!config.enabled || !config.outputCompaction.enabled) {
+			return {};
+		}
+
+		if (!isSupportedModel(ctx.model)) {
 			return {};
 		}
 
