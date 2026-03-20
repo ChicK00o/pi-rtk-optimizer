@@ -67,9 +67,9 @@ runTest("codex-end with openai provider returns true", () => {
 	assert.equal(isSupportedModel(model), true);
 });
 
-runTest("codex substring without token boundaries with openai provider returns false", () => {
+runTest("codex substring without token boundaries with openai provider returns true", () => {
 	const model = { provider: "openai", id: "decodexed" };
-	assert.equal(isSupportedModel(model), false);
+	assert.equal(isSupportedModel(model), true);
 });
 
 runTest("codex id with openai-codex provider returns true", () => {
@@ -137,9 +137,9 @@ runTest("qwen2 with unsupported provider returns false", () => {
 	assert.equal(isSupportedModel(model), false);
 });
 
-runTest("unsupported model id with anthropic provider returns false", () => {
+runTest("model id including claude token returns true", () => {
 	const model = { provider: "anthropic", id: "not-claude" };
-	assert.equal(isSupportedModel(model), false);
+	assert.equal(isSupportedModel(model), true);
 });
 
 runTest("non-gpt model with openai provider returns false", () => {
@@ -220,9 +220,24 @@ runTest("GOOGLE-VERTEX (uppercase) provider matches case-insensitively", () => {
 	assert.equal(isSupportedModel(model), true);
 });
 
-runTest("empty string provider returns false", () => {
+runTest("uppercase CODEX model id matches case-insensitively", () => {
+	const model = { provider: "openai", id: "CODEX-001" };
+	assert.equal(isSupportedModel(model), true);
+});
+
+runTest("uppercase O1 model id matches case-insensitively", () => {
+	const model = { provider: "openai", id: "O1-PREVIEW" };
+	assert.equal(isSupportedModel(model), true);
+});
+
+runTest("uppercase O3 model id matches case-insensitively", () => {
+	const model = { provider: "openai", id: "O3-MINI" };
+	assert.equal(isSupportedModel(model), true);
+});
+
+runTest("empty string provider still returns true when id includes claude", () => {
 	const model = { provider: "", id: "claude-3" };
-	assert.equal(isSupportedModel(model), false);
+	assert.equal(isSupportedModel(model), true);
 });
 
 runTest("empty string id with anthropic returns false", () => {
@@ -230,14 +245,14 @@ runTest("empty string id with anthropic returns false", () => {
 	assert.equal(isSupportedModel(model), false);
 });
 
-runTest("whitespace provider returns false", () => {
+runTest("whitespace provider still returns true when id includes claude", () => {
 	const model = { provider: "   ", id: "claude-3" };
-	assert.equal(isSupportedModel(model), false);
+	assert.equal(isSupportedModel(model), true);
 });
 
-runTest("provider undefined returns false", () => {
+runTest("provider undefined returns true when id includes claude", () => {
 	const model = { id: "claude-3" };
-	assert.equal(isSupportedModel(model), false);
+	assert.equal(isSupportedModel(model), true);
 });
 
 runTest("id undefined returns false", () => {
@@ -245,9 +260,9 @@ runTest("id undefined returns false", () => {
 	assert.equal(isSupportedModel(model), false);
 });
 
-runTest("non-string provider returns false", () => {
+runTest("non-string provider returns true when id includes claude", () => {
 	const model = { provider: 123, id: "claude-3" };
-	assert.equal(isSupportedModel(model), false);
+	assert.equal(isSupportedModel(model), true);
 });
 
 runTest("non-string id returns false", () => {
@@ -260,14 +275,34 @@ runTest("whitespace-only id returns false", () => {
 	assert.equal(isSupportedModel(model), false);
 });
 
-runTest("partial match 'claude' not at start returns false", () => {
+runTest("partial match 'claude' not at start returns true", () => {
 	const model = { provider: "anthropic", id: "my-claude-model" };
-	assert.equal(isSupportedModel(model), false);
+	assert.equal(isSupportedModel(model), true);
 });
 
-runTest("partial match 'gpt' not at start returns false", () => {
+runTest("partial match 'gpt' not at start returns true", () => {
 	const model = { provider: "openai", id: "my-gpt-model" };
-	assert.equal(isSupportedModel(model), false);
+	assert.equal(isSupportedModel(model), true);
+});
+
+runTest("unsupported provider still returns true when id includes gpt", () => {
+	const model = { provider: "antigravity", id: "gpt-4.1" };
+	assert.equal(isSupportedModel(model), true);
+});
+
+runTest("unsupported provider still returns true when id includes gemini", () => {
+	const model = { provider: "custom-llm-provider", id: "gemini-ultra" };
+	assert.equal(isSupportedModel(model), true);
+});
+
+runTest("unsupported provider still returns true when id includes o1", () => {
+	const model = { provider: "custom-llm-provider", id: "o1-preview" };
+	assert.equal(isSupportedModel(model), true);
+});
+
+runTest("unsupported provider still returns true when id includes o3", () => {
+	const model = { provider: "custom-llm-provider", id: "o3-mini" };
+	assert.equal(isSupportedModel(model), true);
 });
 
 runTest("partial match 'gemini' not included returns false", () => {
