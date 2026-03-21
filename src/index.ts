@@ -7,6 +7,7 @@ import {
 	saveRtkIntegrationConfig,
 } from "./config-store.js";
 import { isSupportedModel } from "./model-support.js";
+import { refreshModelPatterns } from "./model-patterns.js";
 import { computeRewriteDecision } from "./command-rewriter.js";
 import { registerRtkIntegrationCommand } from "./config-modal.js";
 import { EXTENSION_NAME } from "./constants.js";
@@ -126,6 +127,7 @@ export default function rtkIntegrationExtension(pi: ExtensionAPI): void {
 		config = loaded.config;
 		pendingLoadWarning = loaded.warning;
 		await refreshRuntimeStatus();
+		refreshModelPatterns();
 
 		if (pendingLoadWarning && ctx) {
 			warnOnce(ctx, pendingLoadWarning);

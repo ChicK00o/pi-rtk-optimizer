@@ -213,6 +213,30 @@ A starter template is included at `config/config.example.json`.
 }
 ```
 
+### Model Pattern Configuration
+
+The `rtk.json` file controls which AI models RTK features apply to. This allows you to enable RTK selectively for specific model providers.
+
+**Location:**
+```
+~/.pi/agent/extensions/pi-rtk-optimizer/rtk.json
+```
+
+**What it does:**
+- Contains an array of model name patterns (substrings matched against lowercase model IDs)
+- RTK features only activate for models matching these patterns
+- Default patterns: `["claude", "gpt", "codex", "gemini", "o1", "o3"]`
+
+**Example content:**
+```json
+["claude", "gpt", "codex", "gemini", "o1", "o3"]
+```
+
+**Override semantics:**
+- If `rtk.json` exists, it **completely replaces** the default patterns (no merge)
+- Empty array `[]` disables RTK for all models
+- Patterns are case-insensitive substring matches (e.g., `"claude"` matches `"claude-3-opus"`)
+
 ## Technical Details
 
 ### Architecture
