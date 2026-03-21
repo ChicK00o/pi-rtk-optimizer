@@ -127,11 +127,14 @@ export default function rtkIntegrationExtension(pi: ExtensionAPI): void {
 		config = loaded.config;
 		pendingLoadWarning = loaded.warning;
 		await refreshRuntimeStatus();
-		refreshModelPatterns();
+		const patternsResult = refreshModelPatterns();
 
 		if (pendingLoadWarning && ctx) {
 			warnOnce(ctx, pendingLoadWarning);
 			pendingLoadWarning = undefined;
+		}
+		if (patternsResult.warning && ctx) {
+			warnOnce(ctx, patternsResult.warning);
 		}
 	};
 

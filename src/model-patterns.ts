@@ -26,7 +26,7 @@ function normalizePatterns(value: unknown): string[] {
 
 	return value
 		.filter((item): item is string => typeof item === "string")
-		.map((s) => s.trim())
+		.map((s) => s.trim().toLowerCase())
 		.filter((s) => s.length > 0);
 }
 

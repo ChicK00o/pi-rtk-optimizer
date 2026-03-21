@@ -220,6 +220,21 @@ runTest("loadModelPatterns handles mixed normalization (non-strings, whitespace,
 	cleanup(tempDir);
 });
 
+runTest("loadModelPatterns lowercases mixed-case user entries", () => {
+	const tempDir = createTempDir();
+	const filePath = join(tempDir, "patterns.json");
+
+	// @ts-ignore
+	writeFileSync(filePath, JSON.stringify(["Claude", "GPT", "Gemini-Pro"]));
+
+	const result = loadModelPatterns(filePath);
+
+	assert.deepEqual(result.patterns, ["claude", "gpt", "gemini-pro"]);
+	assert.equal(result.warning, undefined);
+
+	cleanup(tempDir);
+});
+
 runTest("getActiveModelPatterns returns cached patterns after load", () => {
 	const tempDir = createTempDir();
 	const filePath = join(tempDir, "patterns.json");
